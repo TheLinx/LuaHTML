@@ -1,0 +1,20 @@
+[[ -- this marks the beginning of a Lua code block
+pageTitle = "My Awesome Site!"
+description = [[
+oh hi ther!
+i herd u liek mudkipps!!
+it's ok with me :D
+]]
+-- and now we close the block:
+]]<html>
+<head>
+<title>[[=pageTitle]]</title>
+<!-- This is valid syntax, "=" is shorthand for "return " -->
+</head>
+<body>
+<h1>Example!!</h1>
+[[ for x=1,10 do ]]
+<p>This is paragraph #[[=x]]! I bet you didn't know that!</p>
+[[ end ]]
+</body>
+</html>
