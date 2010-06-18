@@ -5,9 +5,18 @@ It stays close to the Lua philosophy and is easy to use.
 
 h2. License
 
-The code is public domain, you may use it however you like without any attribution
-or royalties.
+The code is public domain, you may use it however you like without any attribution or royalties.
 Backports are appreciated, though!
+
+h2. How to install (with LuaRocks)
+
+Run the command _luarocks install http://github.com/TheLinx/LuaHTML/raw/rocks/luahtml-1.0.0-1.rockspec_
+
+h2. How to install (Manually)
+
+Put the folder _luahtml_ somewhere in your Lua module path.
+On Linux/Mac this is usually something like _/usr/local/share/lua/5.1/_.
+On Windows it's _C:\Program Files\Lua\5.1\_.
 
 h2. Example LHTML page
 
