@@ -1,6 +1,9 @@
-local tableSort = table.sort
 
-module("luahtml", package.seeall)
+local LuaVersion,OUTER = _VERSION,_G
+local setmetatable,assert,loadstring,setfenv,error,type,tostring = setmetatable,assert,loadstring,setfenv,error,type,tostring
+local tableConcat = table.concat
+
+module("luahtml")
 
 local function bracketfinder(text, bracket)
 	local bracket = bracket or "["
@@ -31,7 +34,7 @@ local function tsort(t)
 	return out
 end
 
-function blockfinder(text)
+local function blockfinder(text)
 	local ops,eds,out = bracketfinder(text,"["),bracketfinder(text,"]"),{}
 	if #ops ~= #eds then
 		return nil,"Malformed LuaHTML page"
@@ -54,11 +57,59 @@ function blockfinder(text)
 			break
 		end
 	end
+	return ops,eds
+end
+
+local function lua51_blockrunner(text)
+	local env,blocks,out,p = {},{},{},{}
+	setmetatable(env, {__index = OUTER})
+	function env.print(...)
+		local t = {...}
+		for n=1,#t do
+			p[#p+1] = tostring(t[n]).."\n"
+		end
+	end
+	local ops,eds = blockfinder(text)
+	if not ops then return nil,eds end
 	for n=1,#ops do
 		local block = text:sub(ops[n]+2,eds[n]-1)
 		if block:sub(1,1) == "=" then
 			block = "return "..block:sub(2)
 		end
-		print(block)
+		local blockf = assert(loadstring(block))
+		setfenv(blockf, env)
+		local result = blockf()
+		local st = 1
+		if eds[n-1] then
+			st = eds[n-1]+2
+		end
+		out[#out+1] = text:sub(st,ops[n]-1)
+		if #p ~= 0 then
+			for n=1,#p do
+				out[#out+1] = p[n]
+			end
+			p = {}
+		end
+		if result then
+			out[#out+1] = result
+		end
 	end
+	out[#out+1] = text:sub(eds[#eds]+2)
+	return tableConcat(out)
+end
+
+local function lua52_blockrunner(text)
+	-- I'll add this later
+end
+
+function format(text)
+	if not text or type(text) ~= "string" then
+		error("bad argument #1 to 'format' (string expected, got "..type(text)..")")
+	end
+	if LuaVersion == "Lua 5.1" then
+		return lua51_blockrunner(text)
+	--elseif LuaVersion == "Lua 5.2" then
+	--	return lua52_blockrunner(text)
+	end
+	error("Incompatible Lua version!")
 end

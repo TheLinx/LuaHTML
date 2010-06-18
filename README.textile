@@ -1,0 +1,43 @@
+h1. LuaHTML
+
+LuaHTML is a template engine that allows the use of Lua code in your HTML websites.
+It stays close to the Lua philosophy and is easy to use.
+
+h2. License
+
+The code is public domain, you may use it however you like without any attribution
+or royalties.
+Backports are appreciated, though!
+
+h2. Example LHTML page
+
+<pre>
+[[ -- this marks the beginning of a Lua code block
+pageTitle = "My Awesome Site!"
+announcement = [[
+<p>Lua is super awesome!</p>
+]]
+-- and now we close the block:
+]]<html>
+<head>
+<title>[[=pageTitle]]</title>
+<!-- This is valid syntax, "=" is shorthand for "return " -->
+</head>
+<body>
+<h1>Example!</h1>
+[[ for x=1,10 do
+	print("<p>This is paragraph #"..x.."! I bet you didn't know that!</p>")
+end ]]
+[[=announcement]]
+</body>
+</html>
+</pre>
+
+h2. Example code
+
+<pre>
+-- we assume that 's' is the variable containing the lhtml source
+require("luahtml")
+output = luahtml.format(s)
+-- super simple!!
+</pre>
