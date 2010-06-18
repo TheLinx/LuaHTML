@@ -60,13 +60,18 @@ local function blockfinder(text)
 	return ops,eds
 end
 
-local function lua51_blockrunner(text)
+function format(text)
+	if not text or type(text) ~= "string" then
+		error("bad argument #1 to 'format' (string expected, got "..type(text)..")")
+	end
 	local env,blocks,out,p = {},{},{},{}
 	setmetatable(env, {__index = OUTER})
-	function env.print(...)
-		local t = {...}
-		for n=1,#t do
-			p[#p+1] = tostring(t[n]).."\n"
+	if LuaVersion == "Lua 5.1" then
+		function env.print(...)
+			local t = {...}
+			for n=1,#t do
+				p[#p+1] = tostring(t[n]).."\n"
+			end
 		end
 	end
 	local ops,eds = blockfinder(text)
@@ -76,9 +81,24 @@ local function lua51_blockrunner(text)
 		if block:sub(1,1) == "=" then
 			block = "return "..block:sub(2)
 		end
-		local blockf = assert(loadstring(block))
-		setfenv(blockf, env)
-		local result = blockf()
+		local result,p = nil,{}
+		if LuaVersion == "Lua 5.1" then
+			local blockf = assert(loadstring(block))
+			setfenv(blockf, env)
+			result = blockf()
+		elseif LuaVersion == "Lua 5.2" then
+		-- this doesn't work. :(
+			local outer = _ENV
+			local function print(...)
+				local t = {...}
+				for n=1,#t do
+					p[#p+1] = outer.tostring(t[n]).."\n"
+				end
+			end
+			local _ENV = env
+			local blockf = assert(loadstring(block))
+			result = blockf()
+		end
 		local st = 1
 		if eds[n-1] then
 			st = eds[n-1]+2
@@ -96,20 +116,4 @@ local function lua51_blockrunner(text)
 	end
 	out[#out+1] = text:sub(eds[#eds]+2)
 	return tableConcat(out)
-end
-
-local function lua52_blockrunner(text)
-	-- I'll add this later
-end
-
-function format(text)
-	if not text or type(text) ~= "string" then
-		error("bad argument #1 to 'format' (string expected, got "..type(text)..")")
-	end
-	if LuaVersion == "Lua 5.1" then
-		return lua51_blockrunner(text)
-	--elseif LuaVersion == "Lua 5.2" then
-	--	return lua52_blockrunner(text)
-	end
-	error("Incompatible Lua version!")
 end
