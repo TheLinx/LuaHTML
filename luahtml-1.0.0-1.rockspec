@@ -20,6 +20,6 @@ source = {
 build = {
     type = "builtin",
     modules = {
-        state = "luahtml/init.lua"
+        luahtml = "luahtml/init.lua"
     }
 }
