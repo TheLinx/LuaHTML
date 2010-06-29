@@ -10,7 +10,7 @@ Backports are appreciated, though!
 
 h2. How to install (with LuaRocks)
 
-Run the command _luarocks install http://github.com/TheLinx/LuaHTML/raw/rocks/luahtml-1.1.0-1.rockspec_
+Run the command _luarocks install http://github.com/TheLinx/LuaHTML/raw/rocks/luahtml-1.1.1-1.rockspec_
 
 h2. How to install (Manually)
 
