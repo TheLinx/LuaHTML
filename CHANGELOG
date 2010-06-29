@@ -1,4 +1,10 @@
-LUAHTML 1.0.0
+LuaHTML 1.1.0
+=============
+
+  * Now fails gracefully if no [[]] tags are present in a file.
+  * Added open(file name OR file handle) - opens a file (or reads from a handle) and formats contents.
+
+LuaHTML 1.0.0
 =============
 
   * First release

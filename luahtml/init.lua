@@ -1,7 +1,7 @@
-
 local LuaVersion,OUTER = _VERSION,_G
 local setmetatable,assert,loadstring,setfenv,error,type,tostring = setmetatable,assert,loadstring,setfenv,error,type,tostring
 local tableConcat = table.concat
+local ioOpen = io.open
 
 module("luahtml")
 
@@ -116,4 +116,21 @@ function format(text)
 	end
 	out[#out+1] = text:sub(eds[#eds]+2)
 	return tableConcat(out)
+end
+
+function open(file, data)
+	local s,err
+	if type(file) == "string" then
+	-- assume filename
+		local fhand,err = ioOpen(file, "r")
+		if not fhand then return nil,err end
+		s,err = fhand:read("*all")
+		fhand:close()
+	elseif file.read then
+		s,err = file:read("*all")
+	else
+		return false,"Not a valid file identifier."
+	end
+	if not s then return nil,err end
+	return format(s, data)
 end
