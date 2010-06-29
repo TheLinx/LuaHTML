@@ -64,6 +64,9 @@ function format(text)
 	if not text or type(text) ~= "string" then
 		error("bad argument #1 to 'format' (string expected, got "..type(text)..")")
 	end
+	if not text:find("%[%[") then
+		return text
+	end
 	local env,blocks,out,p = {},{},{},{}
 	setmetatable(env, {__index = OUTER})
 	if LuaVersion == "Lua 5.1" then
